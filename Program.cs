@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows.Forms;
 
 namespace reversi
 {
@@ -9,7 +10,8 @@ namespace reversi
     {
         public static void Main()
         {
-
+            Form render = new RenderForm();
+            Application.Run(render);
         }
     }
 }
