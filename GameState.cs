@@ -14,6 +14,10 @@ namespace reversi
         const String TIE        = "state tie";
 
 
+        Board board;
+        String state;
+        int blueStones, redStones;
+
         public GameState()
         {
 
