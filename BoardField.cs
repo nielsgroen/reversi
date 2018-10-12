@@ -21,8 +21,8 @@ namespace reversi
          * - Did it recently change color?
          * - Was it the last played?
          */
-        bool bluePlayable, redPlayable, recentlyChanged, lastPlayed;
-        String stone;
+        public bool bluePlayable, redPlayable, recentlyChanged, lastPlayed;
+        public String stone;
 
         public BoardField()
         {

@@ -17,3 +17,11 @@ namespace reversi
         }
     }
 }
+
+/**
+ * Overzicht TODO:
+ * - UI speelbord laten tekenen
+ * - UI hele spelstatus laten tekenen
+ * - Methode maken om Playable velden te updaten/decteren
+ * - 
+ */
