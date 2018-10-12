@@ -20,10 +20,10 @@ namespace reversi
         public BoardField[,] board;
 
 
-        public GameState()
+        public GameState(int boardSize)
         {
             this.state = GameState.BLUETURN;
-            this.boardSize = 8;
+            this.boardSize = boardSize;
             this.board = new BoardField[this.boardSize, this.boardSize];
             for (int i = 0; i < this.boardSize; i++)
             {

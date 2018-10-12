@@ -15,7 +15,7 @@ namespace reversi
 
         public RenderForm()
         {
-            this.game = new Game();
+            this.game = new Game(8);
             InitializeComponent();
         }
 
