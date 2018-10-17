@@ -26,9 +26,16 @@ namespace reversi
             this.pictureBox1.Image = this.gameBitmap;
         }
 
-        private void pictureBox1_Click(object sender, EventArgs e)
+        private void picturebox1_MouseClick(object sender, MouseEventArgs e)
         {
 
+        }
+
+        private static Bitmap gameStateToBitmap(GameState state)
+        {
+
+
+            return new Bitmap(200, 200); // TODO needs to change, including size
         }
     }
 }
