@@ -50,7 +50,7 @@ namespace reversi
             this.state.board[i, j].bluePlayable = false;
             this.state.board[i, j].redPlayable = false;
 
-            if (this.state.board[i,j].stone == BoardField.NOSTONE)
+            if (this.state.board[i, j].stone == BoardField.NOSTONE)
             {
                 bool bluePlayable = false, redPlayable = false;
                 for (int iDir = -1; iDir <= 1; iDir++)
