@@ -11,7 +11,7 @@ namespace reversi
         // TODO logica inbouwen dat boardSize altijd even getal is.
 
 
-        GameState state;
+        public GameState state;
 
         public Game(int boardSize)
         {
