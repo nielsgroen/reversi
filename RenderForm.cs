@@ -45,5 +45,9 @@ namespace reversi
 
         }
 
+        private void pictureBox1_MouseClick(object sender, MouseEventArgs e)
+        {
+
+        }
     }
 }
