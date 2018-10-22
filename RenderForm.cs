@@ -16,7 +16,7 @@ namespace reversi
 
         public RenderForm()
         {
-            this.game = new Game(7);
+            this.game = new Game(8);
             InitializeComponent();
 
             this.gameBitmap = new Bitmap(this.pictureBox1.Width, this.pictureBox1.Height);
