@@ -27,9 +27,11 @@ namespace reversi
 
         }
 
-        private void pictureBox1_MouseClick(object sender, MouseEventArgs e)
+        private void pictureBox1_MouseClick(object sender, MouseEventArgs mea)
         {
-
+            Point vak = pictureBoxToBoardCoords(mea.X, mea.Y);
+            this.game.makeMove(vak.X, vak.Y);
+            this.drawBitmap();
         }
 
         private void drawBitmap()
@@ -80,6 +82,20 @@ namespace reversi
                 gr.DrawEllipse(Pens.Gray, playableVak);
             }
 
+        }
+
+        private Point pictureBoxToBoardCoords(Point po)
+        {
+            int vakBreedte = this.gameBitmap.Width / this.game.state.boardWidth - 1; // -1 zorgt ervoor dat rand van laatste vakken compleet getekend wordt
+            int vakHoogte = this.gameBitmap.Height / this.game.state.boardHeight - 1;
+            int i = po.X / vakBreedte;
+            int j = po.Y / vakHoogte;
+            return new Point(i, j);
+        }
+
+        private Point pictureBoxToBoardCoords(int x, int y)
+        {
+            return pictureBoxToBoardCoords(new Point(x, y));
         }
 
 

@@ -8,8 +8,6 @@ namespace reversi
 {
     class Game
     {
-        // TODO logica inbouwen dat boardSize altijd even getal is.
-
 
         public GameState state;
 
@@ -34,6 +32,54 @@ namespace reversi
         public Game(GameState state)
         {
             this.state = state;
+        }
+
+        public void makeMove(int i, int j)
+        {
+            switch (this.state.state)
+            {
+                case GameState.BLUETURN:
+                    this.blueMoves(i, j);
+                    break;
+                case GameState.REDTURN:
+                    this.redMoves(i, j);
+                    break;
+            }
+        }
+
+        private void blueMoves(int i, int j)
+        {
+            if (this.state.board[i, j].bluePlayable)
+            {
+                this.state.board[i, j].setStone(BoardField.BLUESTONE);
+                this.updatePlayable();
+                this.updateGamestate();
+            }
+        }
+
+        private void redMoves(int i, int j)
+        {
+            if (this.state.board[i, j].redPlayable)
+            {
+                this.state.board[i, j].setStone(BoardField.REDSTONE);
+                // TODO switch stones
+                this.updatePlayable();
+                this.updateGamestate();
+            }
+        }
+
+        private void updateGamestate()
+        {
+            // TODO make proper gamestate updater
+
+            if (this.state.state == GameState.BLUETURN)
+            {
+                this.state.state = GameState.REDTURN;
+            }
+            else if (this.state.state == GameState.REDTURN)
+            {
+                this.state.state = GameState.BLUETURN;
+            }
         }
 
         public void updatePlayable()
