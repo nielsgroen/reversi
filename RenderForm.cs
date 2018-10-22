@@ -24,8 +24,8 @@ namespace reversi
 
 
             Size s = this.ClientSize;
-            int lengte = s.Width / 2 - gameBitmap.Width / 2;
-            int breedte = s.Height / 2 - gameBitmap.Height / 2;
+            int lengte = (s.Width - gameBitmap.Width) /2;
+            int breedte = (s.Height - gameBitmap.Height) / 2;
 
             int dia = 40;
 
@@ -33,16 +33,11 @@ namespace reversi
             {
                 for (int y = 0; y < this.game.state.boardSize; y++)
                 {
-                    gr.DrawRectangle(Pens.Black, x*dia+lengte, y*dia+breedte, dia, dia);
+                    gr.DrawRectangle(Pens.Black, (x*dia)+lengte, (y*dia)+breedte, dia, dia);
                 }
             }
 
             this.pictureBox1.Image = this.gameBitmap;
-        }
-
-        private void pictureBox1_Click(object sender, EventArgs e)
-        {
-            
         }
 
         private void RenderForm_Load(object sender, EventArgs e)
@@ -50,5 +45,9 @@ namespace reversi
 
         }
 
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
