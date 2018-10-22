@@ -13,20 +13,22 @@ namespace reversi
 
         public GameState state;
 
-        public Game(int boardSize)
+        public Game(int boardWidth, int boardHeight)
         {
-            this.state = new GameState(boardSize);
+            this.state = new GameState(boardWidth, boardHeight);
 
             /* Debug.WriteLine(this.state.board[0, 0]);
             this.state.board[0, 0].setStone(BoardField.BLUESTONE);
             Debug.WriteLine(this.state.board[0, 0]); */
 
-            this.state.board[boardSize / 2 - 1, boardSize / 2 - 1].setStone(BoardField.BLUESTONE);
-            this.state.board[boardSize / 2 - 1, boardSize / 2].setStone(BoardField.REDSTONE);
-            this.state.board[boardSize / 2, boardSize / 2 - 1].setStone(BoardField.REDSTONE);
-            this.state.board[boardSize / 2, boardSize / 2].setStone(BoardField.BLUESTONE);
+            this.state.board[boardWidth / 2 - 1, boardHeight / 2 - 1].setStone(BoardField.BLUESTONE);
+            this.state.board[boardWidth / 2 - 1, boardHeight / 2].setStone(BoardField.REDSTONE);
+            this.state.board[boardWidth / 2, boardHeight / 2 - 1].setStone(BoardField.REDSTONE);
+            this.state.board[boardWidth / 2, boardHeight / 2].setStone(BoardField.BLUESTONE);
             this.updatePlayable();
 
+            Debug.WriteLine(this.state.board[4, 2].bluePlayable);
+            Debug.WriteLine(this.checkDirection(4, 4, 0, -1, BoardField.BLUESTONE));
         }
 
         public Game(GameState state)
@@ -36,9 +38,9 @@ namespace reversi
 
         public void updatePlayable()
         {
-            for (int i = 0; i < this.state.boardSize; i++)
+            for (int i = 0; i < this.state.boardWidth; i++)
             {
-                for (int j = 0; j < this.state.boardSize; j++)
+                for (int j = 0; j < this.state.boardHeight; j++)
                 {
                     this.setPlayable(i, j);
                 }
@@ -57,8 +59,8 @@ namespace reversi
                 {
                     for (int jDir = -1; jDir <= 1; jDir++)
                     {
-                        bluePlayable = bluePlayable || this.checkDirection(i, j, iDir, jDir, BoardField.BLUESTONE, false); // naar linksboven
-                        redPlayable = redPlayable || this.checkDirection(i, j, iDir, jDir, BoardField.REDSTONE, false); // naar linksboven
+                        bluePlayable = bluePlayable || this.checkDirection(i, j, iDir, jDir, BoardField.BLUESTONE); // naar linksboven
+                        redPlayable = redPlayable || this.checkDirection(i, j, iDir, jDir, BoardField.REDSTONE); // naar linksboven
                     }
                 }
                 this.state.board[i, j].bluePlayable = bluePlayable;
@@ -70,10 +72,13 @@ namespace reversi
             // this.checkDirection(i, j, -1, -1, BoardField.REDSTONE); // naar linksboven
         }
 
-        public bool checkDirection(int i, int j, int iDir, int jDir, String playerStone, bool encounteredOtherColor)
+        public bool checkDirection(int i, int j, int iDir, int jDir, String playerStone)
         {
-            bool lastIter = false;
-            if (i + iDir < 0 || i + iDir > this.state.boardSize || j + jDir < 0 || j + jDir > this.state.boardSize) // check of volgende vak buiten t bord valt
+
+            // Recursieve versie, doet het ook niet meer gezien parameteraanpassingen van checkDirection
+
+            /* bool lastIter = false;
+            if (i + iDir < 0 || i + iDir >= this.state.boardWidth || j + jDir < 0 || j + jDir >= this.state.boardHeight) // check of volgende vak buiten t bord valt
             {
                 lastIter = true;
             }
@@ -96,7 +101,42 @@ namespace reversi
                 return encounteredOtherColor; // speelbaar als, en alleen als, andere kleur tegengekomen
             }
 
-            return true;
+            return true; */
+
+            Debug.WriteLine("StartCoords: " + i.ToString() + " " + j.ToString() + " " + iDir.ToString() + " " + jDir.ToString());
+
+            bool encounteredOtherColor = false;
+
+            if (iDir == 0 && jDir == 0)
+            {
+                return false;
+            }
+
+            while (true)
+            {
+                if (i + iDir < 0 || i + iDir >= this.state.boardWidth || j + jDir < 0 || j + jDir >= this.state.boardHeight) // check of volgende vak buiten t bord valt
+                {
+                    return false;
+                }
+
+                i += iDir;
+                j += jDir;
+
+                if (this.state.board[i, j].stone == BoardField.NOSTONE) // check ofdat huidige vak leeg is
+                {
+                    return false;
+                }
+                else if (this.state.board[i, j].stone != playerStone)
+                {
+                    encounteredOtherColor = true;
+                }
+                else if (this.state.board[i, j].stone == playerStone)
+                {
+                    return encounteredOtherColor; // speelbaar als, en alleen als, andere kleur tegengekomen
+                }
+
+            }
+
         }
     }
 }
