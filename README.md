@@ -18,4 +18,4 @@
 ### 1.2 Game
 - Takes player actions
 - Updates the GameState object accordingly
-- Returns updated GameState with each call.
+- GameState is made available as read only
