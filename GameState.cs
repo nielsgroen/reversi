@@ -8,11 +8,11 @@ namespace reversi
 {
     class GameState
     {
-        public const String BLUETURN   = "state bt";
-        public const String REDTURN    = "state rt";
-        public const String BLUEWIN    = "state bw";
-        public const String REDWIN     = "state rw";
-        public const String TIE        = "state tie";
+        public const String BLUETURN   = "Blauw is aan de beurt";
+        public const String REDTURN    = "Rood is aan de beurt";
+        public const String BLUEWIN    = "Blauw heeft gewonnen";
+        public const String REDWIN     = "Rood heeft gewonnen";
+        public const String TIE        = "Het is gelijkspel";
 
 
         //Board board;

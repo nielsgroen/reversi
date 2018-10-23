@@ -19,20 +19,9 @@ namespace reversi
             this.game = new Game(8, 8);
             InitializeComponent();
 
-            drawBitmap();
+            drawGamestate();
         }
 
-        private void RenderForm_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void pictureBox1_MouseClick(object sender, MouseEventArgs mea)
-        {
-            Point vak = pictureBoxToBoardCoords(mea.X, mea.Y);
-            this.game.makeMove(vak.X, vak.Y);
-            this.drawBitmap();
-        }
 
         private void drawBitmap()
         {
@@ -40,9 +29,9 @@ namespace reversi
             Graphics gr = Graphics.FromImage(this.gameBitmap);
 
 
-            for (int i = 0; i < this.game.state.boardWidth; i++)
+            for (int i = 0; i < this.game.State.boardWidth; i++)
             {
-                for (int j = 0; j < this.game.state.boardHeight; j++)
+                for (int j = 0; j < this.game.State.boardHeight; j++)
                 {
                     drawVakje(gr, i, j);
                     
@@ -54,8 +43,8 @@ namespace reversi
 
         private void drawVakje(Graphics gr, int i, int j)
         {
-            int vakBreedte = this.gameBitmap.Width / this.game.state.boardWidth - 1; // -1 zorgt ervoor dat rand van laatste vakken compleet getekend wordt
-            int vakHoogte = this.gameBitmap.Height / this.game.state.boardHeight - 1;
+            int vakBreedte = this.gameBitmap.Width / this.game.State.boardWidth - 1; // -1 zorgt ervoor dat rand van laatste vakken compleet getekend wordt
+            int vakHoogte = this.gameBitmap.Height / this.game.State.boardHeight - 1;
 
             Rectangle vak = new Rectangle((i * vakBreedte), (j * vakHoogte), vakBreedte, vakHoogte);
 
@@ -63,7 +52,7 @@ namespace reversi
             gr.DrawRectangle(Pens.Black, vak);
 
             // teken de steen
-            switch (this.game.state.board[i, j].stone)
+            switch (this.game.State.board[i, j].stone)
             {
                 case BoardField.NOSTONE:
                     break;
@@ -76,14 +65,14 @@ namespace reversi
             }
 
             // teken ofdat veld speelbaar is
-            if ((this.game.state.state == GameState.BLUETURN && this.game.state.board[i, j].bluePlayable) || (this.game.state.state == GameState.REDTURN && this.game.state.board[i, j].redPlayable))
+            if ((this.game.State.state == GameState.BLUETURN && this.game.State.board[i, j].bluePlayable) || (this.game.State.state == GameState.REDTURN && this.game.State.board[i, j].redPlayable))
             {
                 Rectangle playableVak = vak;
                 playableVak.Inflate(-2, -2);
                 gr.DrawEllipse(Pens.Gray, playableVak);
             }
 
-            if (this.game.state.board[i, j].recentlyChanged && !this.game.state.board[i, j].lastPlayed)
+            if (this.game.State.board[i, j].recentlyChanged && !this.game.State.board[i, j].lastPlayed)
             {
                 Rectangle recentlyVak = vak;
                 recentlyVak.Inflate(-20, -20);
@@ -91,7 +80,7 @@ namespace reversi
                 gr.FillRectangle(Brushes.Green, recentlyVak);
                 gr.DrawRectangle(Pens.Gray, recentlyVak);
             }
-            if (this.game.state.board[i, j].lastPlayed)
+            if (this.game.State.board[i, j].lastPlayed)
             {
                 Rectangle recentlyVak = vak;
                 recentlyVak.Inflate(-20, -20);
@@ -104,8 +93,8 @@ namespace reversi
 
         private Point pictureBoxToBoardCoords(Point po)
         {
-            int vakBreedte = this.gameBitmap.Width / this.game.state.boardWidth - 1; // -1 zorgt ervoor dat rand van laatste vakken compleet getekend wordt (maar het bord iets kleiner wordt)
-            int vakHoogte = this.gameBitmap.Height / this.game.state.boardHeight - 1;
+            int vakBreedte = this.gameBitmap.Width / this.game.State.boardWidth - 1; // -1 zorgt ervoor dat rand van laatste vakken compleet getekend wordt (maar het bord iets kleiner wordt)
+            int vakHoogte = this.gameBitmap.Height / this.game.State.boardHeight - 1;
             int i = po.X / vakBreedte;
             int j = po.Y / vakHoogte;
             return new Point(i, j);
@@ -117,5 +106,49 @@ namespace reversi
         }
 
 
+
+        // Eventhandlers
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            int breedte, hoogte;
+
+            try
+            {
+                breedte = int.Parse(this.textBox1.Text);
+                hoogte = int.Parse(this.textBox2.Text);
+            } catch (FormatException)
+            {
+                breedte = 8;
+                hoogte = 8;
+            }
+
+
+            this.game = new Game(breedte, hoogte);
+            this.drawGamestate();
+
+            this.textBox1.Text = breedte.ToString();
+            this.textBox2.Text = hoogte.ToString();
+        }
+
+        private void RenderForm_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void pictureBox1_MouseClick(object sender, MouseEventArgs mea)
+        {
+            Point vak = pictureBoxToBoardCoords(mea.X, mea.Y);
+            this.game.makeMove(vak.X, vak.Y);
+            this.drawGamestate();
+        }
+
+        private void drawGamestate()
+        {
+            this.drawBitmap();
+            this.label5.Text = this.game.getNumberStones(BoardField.REDSTONE).ToString();
+            this.label6.Text = this.game.getNumberStones(BoardField.BLUESTONE).ToString();
+            this.label7.Text = this.game.State.state;
+        }
     }
 }
