@@ -19,14 +19,15 @@ namespace reversi
             this.state.board[0, 0].setStone(BoardField.BLUESTONE);
             Debug.WriteLine(this.state.board[0, 0]); */
 
-            this.state.board[boardWidth / 2 - 1, boardHeight / 2 - 1].setStone(BoardField.BLUESTONE);
-            this.state.board[boardWidth / 2 - 1, boardHeight / 2].setStone(BoardField.REDSTONE);
-            this.state.board[boardWidth / 2, boardHeight / 2 - 1].setStone(BoardField.REDSTONE);
-            this.state.board[boardWidth / 2, boardHeight / 2].setStone(BoardField.BLUESTONE);
+
+            // Zet de steen zelf ipv .setStone() deze is voor spelerzetten.
+            this.state.board[boardWidth / 2 - 1, boardHeight / 2 - 1].stone = BoardField.BLUESTONE;
+            this.state.board[boardWidth / 2 - 1, boardHeight / 2].stone = BoardField.REDSTONE;
+            this.state.board[boardWidth / 2, boardHeight / 2 - 1].stone = BoardField.REDSTONE;
+            this.state.board[boardWidth / 2, boardHeight / 2].stone = BoardField.BLUESTONE;
             this.updatePlayable();
 
-            Debug.WriteLine(this.state.board[4, 2].bluePlayable);
-            Debug.WriteLine(this.checkDirection(4, 4, 0, -1, BoardField.BLUESTONE));
+            
         }
 
         public Game(GameState state)
@@ -51,7 +52,9 @@ namespace reversi
         {
             if (this.state.board[i, j].bluePlayable)
             {
+                this.resetChanged();
                 this.state.board[i, j].setStone(BoardField.BLUESTONE);
+                this.flipStones(BoardField.BLUESTONE, i, j);
                 this.updatePlayable();
                 this.updateGamestate();
             }
@@ -61,8 +64,9 @@ namespace reversi
         {
             if (this.state.board[i, j].redPlayable)
             {
+                this.resetChanged();
                 this.state.board[i, j].setStone(BoardField.REDSTONE);
-                // TODO switch stones
+                this.flipStones(BoardField.REDSTONE, i, j);
                 this.updatePlayable();
                 this.updateGamestate();
             }
@@ -89,6 +93,18 @@ namespace reversi
                 for (int j = 0; j < this.state.boardHeight; j++)
                 {
                     this.setPlayable(i, j);
+                }
+            }
+        }
+
+        private void resetChanged()
+        {
+            for (int i = 0; i < this.state.boardWidth; i++)
+            {
+                for (int j = 0; j < this.state.boardHeight; j++)
+                {
+                    this.state.board[i, j].recentlyChanged = false;
+                    this.state.board[i, j].lastPlayed = false;
                 }
             }
         }
@@ -149,7 +165,7 @@ namespace reversi
 
             return true; */
 
-            Debug.WriteLine("StartCoords: " + i.ToString() + " " + j.ToString() + " " + iDir.ToString() + " " + jDir.ToString());
+            // Debug.WriteLine("StartCoords: " + i.ToString() + " " + j.ToString() + " " + iDir.ToString() + " " + jDir.ToString());
 
             bool encounteredOtherColor = false;
 
@@ -182,7 +198,57 @@ namespace reversi
                 }
 
             }
-
         }
+
+        private void flipStones(String playerStone, int i, int j)
+        {
+            for (int iDir = -1; iDir <= 1; iDir++)
+            {
+                for (int jDir = -1; jDir <= 1; jDir++)
+                {
+                    this.flipDirection(i, j, iDir, jDir, playerStone);
+                }
+            }
+        }
+
+        private void flipDirection(int i, int j, int iDir, int jDir, String playerStone)
+        {
+            bool loop = true;
+
+            if ((iDir == 0 && jDir == 0) || !this.checkDirection(i, j, iDir, jDir, playerStone))
+            {
+                loop = false;
+            }
+
+            while (loop)
+            {
+                if (i + iDir < 0 || i + iDir >= this.state.boardWidth || j + jDir < 0 || j + jDir >= this.state.boardHeight) // check of volgende vak buiten t bord valt
+                {
+                    loop = false;
+                }
+                else
+                {
+                    i += iDir;
+                    j += jDir;
+                }
+
+                
+
+                if (this.state.board[i, j].stone == BoardField.NOSTONE) // check ofdat huidige vak leeg is
+                {
+                    loop =  false;
+                }
+                if (this.state.board[i, j].stone != playerStone && this.state.board[i, j].stone != BoardField.NOSTONE)
+                {
+                    this.state.board[i, j].setStone(playerStone);
+                }
+                else if (this.state.board[i, j].stone == playerStone)
+                {
+                    loop = false;
+                }
+
+            }
+        }
+
     }
 }

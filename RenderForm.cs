@@ -75,6 +75,7 @@ namespace reversi
                     break;
             }
 
+            // teken ofdat veld speelbaar is
             if ((this.game.state.state == GameState.BLUETURN && this.game.state.board[i, j].bluePlayable) || (this.game.state.state == GameState.REDTURN && this.game.state.board[i, j].redPlayable))
             {
                 Rectangle playableVak = vak;
@@ -82,11 +83,28 @@ namespace reversi
                 gr.DrawEllipse(Pens.Gray, playableVak);
             }
 
+            if (this.game.state.board[i, j].recentlyChanged && !this.game.state.board[i, j].lastPlayed)
+            {
+                Rectangle recentlyVak = vak;
+                recentlyVak.Inflate(-20, -20);
+                //recentlyVak.Offset(5, 5);
+                gr.FillRectangle(Brushes.Green, recentlyVak);
+                gr.DrawRectangle(Pens.Gray, recentlyVak);
+            }
+            if (this.game.state.board[i, j].lastPlayed)
+            {
+                Rectangle recentlyVak = vak;
+                recentlyVak.Inflate(-20, -20);
+                //recentlyVak.Offset(5, 5);
+                gr.FillRectangle(Brushes.Yellow, recentlyVak);
+                gr.DrawRectangle(Pens.Gray, recentlyVak);
+            }
+
         }
 
         private Point pictureBoxToBoardCoords(Point po)
         {
-            int vakBreedte = this.gameBitmap.Width / this.game.state.boardWidth - 1; // -1 zorgt ervoor dat rand van laatste vakken compleet getekend wordt
+            int vakBreedte = this.gameBitmap.Width / this.game.state.boardWidth - 1; // -1 zorgt ervoor dat rand van laatste vakken compleet getekend wordt (maar het bord iets kleiner wordt)
             int vakHoogte = this.gameBitmap.Height / this.game.state.boardHeight - 1;
             int i = po.X / vakBreedte;
             int j = po.Y / vakHoogte;
