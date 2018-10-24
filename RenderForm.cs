@@ -13,10 +13,12 @@ namespace reversi
     {
         Game game;
         Bitmap gameBitmap;
+        bool displayHelp;
 
         public RenderForm()
         {
-            this.game = new Game(8, 8);
+            this.displayHelp = true;
+            this.game = new Game(6, 6);
             InitializeComponent();
 
             drawGamestate();
@@ -64,30 +66,34 @@ namespace reversi
                     break;
             }
 
-            // teken ofdat veld speelbaar is
-            if ((this.game.State.state == GameState.BLUETURN && this.game.State.board[i, j].bluePlayable) || (this.game.State.state == GameState.REDTURN && this.game.State.board[i, j].redPlayable))
+            if (this.displayHelp)
             {
-                Rectangle playableVak = vak;
-                playableVak.Inflate(-2, -2);
-                gr.DrawEllipse(Pens.Gray, playableVak);
-            }
+                // teken ofdat veld speelbaar is
+                if ((this.game.State.state == GameState.BLUETURN && this.game.State.board[i, j].bluePlayable) || (this.game.State.state == GameState.REDTURN && this.game.State.board[i, j].redPlayable))
+                {
+                    Rectangle playableVak = vak;
+                    playableVak.Inflate(-2, -2);
+                    gr.DrawEllipse(Pens.Gray, playableVak);
+                }
 
-            if (this.game.State.board[i, j].recentlyChanged && !this.game.State.board[i, j].lastPlayed)
-            {
-                Rectangle recentlyVak = vak;
-                recentlyVak.Inflate(-20, -20);
-                //recentlyVak.Offset(5, 5);
-                gr.FillRectangle(Brushes.Green, recentlyVak);
-                gr.DrawRectangle(Pens.Gray, recentlyVak);
+                if (this.game.State.board[i, j].recentlyChanged && !this.game.State.board[i, j].lastPlayed)
+                {
+                    Rectangle recentlyVak = vak;
+                    recentlyVak.Inflate(-20, -20);
+                    //recentlyVak.Offset(5, 5);
+                    gr.FillRectangle(Brushes.Green, recentlyVak);
+                    gr.DrawRectangle(Pens.Gray, recentlyVak);
+                }
+                if (this.game.State.board[i, j].lastPlayed)
+                {
+                    Rectangle recentlyVak = vak;
+                    recentlyVak.Inflate(-20, -20);
+                    //recentlyVak.Offset(5, 5);
+                    gr.FillRectangle(Brushes.Yellow, recentlyVak);
+                    gr.DrawRectangle(Pens.Gray, recentlyVak);
+                }
             }
-            if (this.game.State.board[i, j].lastPlayed)
-            {
-                Rectangle recentlyVak = vak;
-                recentlyVak.Inflate(-20, -20);
-                //recentlyVak.Offset(5, 5);
-                gr.FillRectangle(Brushes.Yellow, recentlyVak);
-                gr.DrawRectangle(Pens.Gray, recentlyVak);
-            }
+            
 
         }
 
@@ -149,6 +155,12 @@ namespace reversi
             this.label5.Text = this.game.getNumberStones(BoardField.REDSTONE).ToString();
             this.label6.Text = this.game.getNumberStones(BoardField.BLUESTONE).ToString();
             this.label7.Text = this.game.State.state;
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            this.displayHelp = !this.displayHelp;
+            this.drawGamestate();
         }
     }
 }
