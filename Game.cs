@@ -8,44 +8,133 @@ namespace reversi
 {
     class Game
     {
-        // TODO logica inbouwen dat boardSize altijd even getal is.
-
-
-        public GameState state;
-
-        public Game(int boardSize)
+        // maak Gamestate read-only voor buitenstaanders.
+        private GameState state;
+        public GameState State
         {
-            this.state = new GameState(boardSize);
-
-            /* Debug.WriteLine(this.state.board[0, 0]);
-            this.state.board[0, 0].setStone(BoardField.BLUESTONE);
-            Debug.WriteLine(this.state.board[0, 0]); */
-
-            this.state.board[boardSize / 2 - 1, boardSize / 2 - 1].setStone(BoardField.BLUESTONE);
-            this.state.board[boardSize / 2 - 1, boardSize / 2].setStone(BoardField.REDSTONE);
-            this.state.board[boardSize / 2, boardSize / 2 - 1].setStone(BoardField.REDSTONE);
-            this.state.board[boardSize / 2, boardSize / 2].setStone(BoardField.BLUESTONE);
-            this.updatePlayable();
-
+            get { return this.state; }
         }
+
+
+
+        public Game(int boardWidth, int boardHeight)
+        {
+            this.state = new GameState(boardWidth, boardHeight);
+
+            // Zet de steen zelf ipv .setStone(), deze is voor spelerzetten.
+            this.state.board[boardWidth / 2 - 1, boardHeight / 2 - 1].stone = BoardField.BLUESTONE;
+            this.state.board[boardWidth / 2 - 1, boardHeight / 2].stone = BoardField.REDSTONE;
+            this.state.board[boardWidth / 2, boardHeight / 2 - 1].stone = BoardField.REDSTONE;
+            this.state.board[boardWidth / 2, boardHeight / 2].stone = BoardField.BLUESTONE;
+            this.updatePlayable();
+        }
+
 
         public Game(GameState state)
         {
             this.state = state;
         }
 
-        public void updatePlayable()
+
+        public void makeMove(int i, int j)
         {
-            for (int i = 0; i < this.state.boardSize; i++)
+            switch (this.state.state)
             {
-                for (int j = 0; j < this.state.boardSize; j++)
+                case GameState.BLUETURN:
+                    this.blueMoves(i, j);
+                    break;
+                case GameState.REDTURN:
+                    this.redMoves(i, j);
+                    break;
+            }
+        }
+
+        public int getNumberStones(String playerStone)
+        {
+            int result = 0;
+            for (int i = 0; i < this.state.boardWidth; i++)
+            {
+                for (int j = 0; j < this.state.boardHeight; j++)
+                {
+                    if(this.state.board[i, j].stone == playerStone)
+                    {
+                        result++;
+                    }
+                }
+            }
+            return result;
+        }
+
+
+
+        //      /\ public    || 
+        //      ||           || 
+        //      ||           \/ private
+
+        
+        
+        private void blueMoves(int i, int j)
+        {
+            if (this.state.board[i, j].bluePlayable)
+            {
+                this.resetChanged();
+                this.state.board[i, j].setStone(BoardField.BLUESTONE);
+                this.flipStones(BoardField.BLUESTONE, i, j);
+                this.updatePlayable();
+                this.updateGamestate();
+            }
+        }
+
+        private void redMoves(int i, int j)
+        {
+            if (this.state.board[i, j].redPlayable)
+            {
+                this.resetChanged();
+                this.state.board[i, j].setStone(BoardField.REDSTONE);
+                this.flipStones(BoardField.REDSTONE, i, j);
+                this.updatePlayable();
+                this.updateGamestate();
+            }
+        }
+
+        private void updateGamestate()
+        {
+            // TODO make proper gamestate updater
+
+            if (this.state.state == GameState.BLUETURN)
+            {
+                this.state.state = GameState.REDTURN;
+            }
+            else if (this.state.state == GameState.REDTURN)
+            {
+                this.state.state = GameState.BLUETURN;
+            }
+        }
+
+        private void updatePlayable()
+        {
+            for (int i = 0; i < this.state.boardWidth; i++)
+            {
+                for (int j = 0; j < this.state.boardHeight; j++)
                 {
                     this.setPlayable(i, j);
                 }
             }
         }
 
-        public void setPlayable(int i, int j)
+        private void resetChanged()
+        {
+            for (int i = 0; i < this.state.boardWidth; i++)
+            {
+                for (int j = 0; j < this.state.boardHeight; j++)
+                {
+                    this.state.board[i, j].recentlyChanged = false;
+                    this.state.board[i, j].lastPlayed = false;
+                }
+            }
+        }
+
+        private void setPlayable(int i, int j)
         {
             this.state.board[i, j].bluePlayable = false;
             this.state.board[i, j].redPlayable = false;
@@ -57,8 +146,8 @@ namespace reversi
                 {
                     for (int jDir = -1; jDir <= 1; jDir++)
                     {
-                        bluePlayable = bluePlayable || this.checkDirection(i, j, iDir, jDir, BoardField.BLUESTONE, false); // naar linksboven
-                        redPlayable = redPlayable || this.checkDirection(i, j, iDir, jDir, BoardField.REDSTONE, false); // naar linksboven
+                        bluePlayable = bluePlayable || this.checkDirection(i, j, iDir, jDir, BoardField.BLUESTONE); // naar linksboven
+                        redPlayable = redPlayable || this.checkDirection(i, j, iDir, jDir, BoardField.REDSTONE); // naar linksboven
                     }
                 }
                 this.state.board[i, j].bluePlayable = bluePlayable;
@@ -70,33 +159,90 @@ namespace reversi
             // this.checkDirection(i, j, -1, -1, BoardField.REDSTONE); // naar linksboven
         }
 
-        public bool checkDirection(int i, int j, int iDir, int jDir, String playerStone, bool encounteredOtherColor)
+        private bool checkDirection(int i, int j, int iDir, int jDir, String playerStone)
         {
-            bool lastIter = false;
-            if (i + iDir < 0 || i + iDir > this.state.boardSize || j + jDir < 0 || j + jDir > this.state.boardSize) // check of volgende vak buiten t bord valt
-            {
-                lastIter = true;
-            }
+            bool encounteredOtherColor = false;
 
-            if (this.state.board[i, j].stone == BoardField.NOSTONE) // check ofdat huidige vak leeg is
+            if (iDir == 0 && jDir == 0)
             {
                 return false;
             }
-            else if (this.state.board[i, j].stone != BoardField.NOSTONE && this.state.board[i, j].stone != playerStone)
+
+            while (true)
             {
-                encounteredOtherColor = true;
-                if (lastIter)
+                if (i + iDir < 0 || i + iDir >= this.state.boardWidth || j + jDir < 0 || j + jDir >= this.state.boardHeight) // check of volgende vak buiten t bord valt
                 {
                     return false;
                 }
-                return this.checkDirection(i + iDir, j + jDir, iDir, jDir, playerStone, encounteredOtherColor);
+
+                i += iDir;
+                j += jDir;
+
+                if (this.state.board[i, j].stone == BoardField.NOSTONE) // check ofdat huidige vak leeg is
+                {
+                    return false;
+                }
+                else if (this.state.board[i, j].stone != playerStone)
+                {
+                    encounteredOtherColor = true;
+                }
+                else if (this.state.board[i, j].stone == playerStone)
+                {
+                    return encounteredOtherColor; // speelbaar als, en alleen als, andere kleur tegengekomen
+                }
+
             }
-            else if (this.state.board[i, j].stone != BoardField.NOSTONE && this.state.board[i, j].stone == playerStone)
+        }
+
+        private void flipStones(String playerStone, int i, int j)
+        {
+            for (int iDir = -1; iDir <= 1; iDir++)
             {
-                return encounteredOtherColor; // speelbaar als, en alleen als, andere kleur tegengekomen
+                for (int jDir = -1; jDir <= 1; jDir++)
+                {
+                    this.flipDirection(i, j, iDir, jDir, playerStone);
+                }
+            }
+        }
+
+        private void flipDirection(int i, int j, int iDir, int jDir, String playerStone)
+        {
+            bool loop = true;
+
+            if ((iDir == 0 && jDir == 0) || !this.checkDirection(i, j, iDir, jDir, playerStone))
+            {
+                loop = false;
             }
 
-            return true;
+            while (loop)
+            {
+                if (i + iDir < 0 || i + iDir >= this.state.boardWidth || j + jDir < 0 || j + jDir >= this.state.boardHeight) // check of volgende vak buiten t bord valt
+                {
+                    loop = false;
+                }
+                else
+                {
+                    i += iDir;
+                    j += jDir;
+                }
+
+                
+
+                if (this.state.board[i, j].stone == BoardField.NOSTONE) // check ofdat huidige vak leeg is
+                {
+                    loop =  false;
+                }
+                if (this.state.board[i, j].stone != playerStone && this.state.board[i, j].stone != BoardField.NOSTONE)
+                {
+                    this.state.board[i, j].setStone(playerStone);
+                }
+                else if (this.state.board[i, j].stone == playerStone)
+                {
+                    loop = false;
+                }
+
+            }
         }
+
     }
 }

@@ -8,27 +8,28 @@ namespace reversi
 {
     class GameState
     {
-        const String BLUETURN   = "state bt";
-        const String REDTURN    = "state rt";
-        const String BLUEWIN    = "state bw";
-        const String REDWIN     = "state rw";
-        const String TIE        = "state tie";
+        public const String BLUETURN   = "Blauw is aan de beurt";
+        public const String REDTURN    = "Rood is aan de beurt";
+        public const String BLUEWIN    = "Blauw heeft gewonnen";
+        public const String REDWIN     = "Rood heeft gewonnen";
+        public const String TIE        = "Het is gelijkspel";
 
 
         //Board board;
         public String state;
-        public int blueStones, redStones, boardSize;
+        public int blueStones, redStones, boardWidth, boardHeight;
         public BoardField[,] board;
 
 
-        public GameState(int boardSize)
+        public GameState(int boardWidth, int boardHeight)
         {
             this.state = GameState.BLUETURN;
-            this.boardSize = boardSize;
-            this.board = new BoardField[this.boardSize, this.boardSize];
-            for (int i = 0; i < this.boardSize; i++)
+            this.boardWidth = boardWidth;
+            this.boardHeight = boardHeight;
+            this.board = new BoardField[this.boardWidth, this.boardHeight];
+            for (int i = 0; i < this.boardWidth; i++)
             {
-                for (int j = 0; j < this.boardSize; j++)
+                for (int j = 0; j < this.boardHeight; j++)
                 {
                     this.board[i, j] = new BoardField();
                 }
