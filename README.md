@@ -39,5 +39,5 @@
 
 ### 2.3 Gamestate
 - Has a state who's turn it is or the outcome of the game.
-- Has 2d array of BoardFields.
+- Has 2D-array of BoardFields.
 - Also stores boardWidth and boardHeight.
