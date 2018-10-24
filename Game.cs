@@ -65,14 +65,43 @@ namespace reversi
             return result;
         }
 
+        public bool redCanPlay()
+        {
+            for (int i = 0; i < this.state.boardWidth; i++)
+            {
+                for (int j = 0; j < this.state.boardHeight; j++)
+                {
+                    if (this.state.board[i, j].redPlayable)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        public bool blueCanPlay()
+        {
+            for (int i = 0; i < this.state.boardWidth; i++)
+            {
+                for (int j = 0; j < this.state.boardHeight; j++)
+                {
+                    if (this.state.board[i, j].bluePlayable)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
 
 
         //      /\ public    || 
         //      ||           || 
         //      ||           \/ private
 
-        
-        
+
+
         private void blueMoves(int i, int j)
         {
             if (this.state.board[i, j].bluePlayable)
@@ -103,11 +132,52 @@ namespace reversi
 
             if (this.state.state == GameState.BLUETURN)
             {
-                this.state.state = GameState.REDTURN;
+                if (redCanPlay())
+                {
+                    this.state.state = GameState.REDTURN;
+                    return;
+                }
+
+                if (blueCanPlay())
+                {
+                    return;
+                }
+
+                this.endGame();
             }
             else if (this.state.state == GameState.REDTURN)
             {
-                this.state.state = GameState.BLUETURN;
+                if (blueCanPlay())
+                {
+                    this.state.state = GameState.BLUETURN;
+                    return;
+                }
+
+                if (redCanPlay())
+                {
+                    return;
+                }
+
+                this.endGame();
+            }
+        }
+
+        private void endGame()
+        {
+            int blue = this.getNumberStones(BoardField.BLUESTONE);
+            int red = this.getNumberStones(BoardField.REDSTONE);
+
+            if (blue > red)
+            {
+                this.state.state = GameState.BLUEWIN;
+            }
+            else if (red > blue)
+            {
+                this.state.state = GameState.REDWIN;
+            }
+            else
+            {
+                this.state.state = GameState.TIE;
             }
         }
 
