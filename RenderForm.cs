@@ -125,8 +125,8 @@ namespace reversi
                 hoogte = int.Parse(this.textBox2.Text);
             } catch (FormatException)
             {
-                breedte = 8;
-                hoogte = 8;
+                breedte = 6;
+                hoogte = 6;
             }
 
 
