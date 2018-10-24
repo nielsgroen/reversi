@@ -17,7 +17,7 @@ namespace reversi
 
         //Board board;
         public String state;
-        public int blueStones, redStones, boardWidth, boardHeight;
+        public int boardWidth, boardHeight;
         public BoardField[,] board;
 
 

@@ -228,7 +228,7 @@ namespace reversi
 
             // this.checkDirection(i, j, -1, -1, BoardField.REDSTONE); // naar linksboven
         }
-
+        // check of dat stenen vanaf een bepaald punt in een bepaald richting geflipt mogen worden.
         private bool checkDirection(int i, int j, int iDir, int jDir, String playerStone)
         {
             bool encounteredOtherColor = false;
@@ -275,6 +275,7 @@ namespace reversi
             }
         }
 
+        // flip de stenen in ee bepaalde richting als dat mag
         private void flipDirection(int i, int j, int iDir, int jDir, String playerStone)
         {
             bool loop = true;
