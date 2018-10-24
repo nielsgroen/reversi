@@ -16,7 +16,6 @@
 ### 1.1 User Interface
 - Converts clicks etc. into player actions.
 - Passes converted action to the Game.
-
 - Takes GameState from Game.
 - And draws to screen.
 
