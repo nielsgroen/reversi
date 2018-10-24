@@ -4,6 +4,11 @@
 [1. Overall lay-out](#overall-lay-out)
 - [1.1 User Interface](#11-user-interface)
 - [1.2 Game](#12-game)
+[2. Game](#game)
+- [2.1 Public properties](#21-public-properties)
+- [2.2 Private properties](#22-private-properties)
+- [2.3 GameState](#23-gamestate)
+
 
 ## 1. Overall lay-out
 
@@ -18,6 +23,7 @@
 - Takes player actions
 - Updates the GameState object accordingly
 - GameState is made available as read only
+
 
 ## 2. Game
 
