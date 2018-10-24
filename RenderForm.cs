@@ -22,18 +22,13 @@ namespace reversi
             this.gameBitmap = new Bitmap(this.pictureBox1.Width, this.pictureBox1.Height);
             Graphics gr = Graphics.FromImage(this.gameBitmap);
 
-
-            Size s = this.ClientSize;
-            int lengte = (s.Width - gameBitmap.Width) /2;
-            int breedte = (s.Height - gameBitmap.Height) / 2;
-
             int dia = 40;
 
             for (int x = 0; x < this.game.state.boardSize; x++)
             {
                 for (int y = 0; y < this.game.state.boardSize; y++)
                 {
-                    gr.DrawRectangle(Pens.Black, (x*dia)+lengte, (y*dia)+breedte, dia, dia);
+                    gr.DrawRectangle(Pens.Black, x*dia, y*dia, dia, dia);
                 }
             }
 
